@@ -19,7 +19,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-打开 `http://localhost:3000`。`GITHUB_TOKEN` 对公开仓库可选，但建议配置以提高 GitHub API 限额。`OPENAI_API_KEY` 可选；未配置时 AI 区域显示降级说明，评分不受影响。`OPENAI_MODEL` 默认为 `gpt-4.1-mini`。真实密钥只放在服务端环境变量，切勿提交 `.env.local`。
+打开 `http://localhost:3000`。`GITHUB_TOKEN` 对公开仓库可选，但建议配置以提高 GitHub API 限额。`DEEPSEEK_API_KEY` 可选；未配置时 AI 区域显示降级说明，评分不受影响。`DEEPSEEK_MODEL` 默认为 `deepseek-flash`。真实密钥只放在服务端环境变量，切勿提交 `.env.local`。
 
 ## 测试与生产运行
 
@@ -35,7 +35,7 @@ npm run start
 
 ## 部署
 
-推荐在 Vercel 导入 GitHub 仓库，Framework Preset 选择 Next.js，设置服务端环境变量 `GITHUB_TOKEN`、可选的 `OPENAI_API_KEY` 与 `OPENAI_MODEL`，构建命令保持 `npm run build`。不需要数据库、后台任务或 Docker。部署后用公开仓库完成一次真实分析，核对 API 限流与区域网络访问。
+推荐在 Vercel 导入 GitHub 仓库，Framework Preset 选择 Next.js，设置服务端环境变量 `GITHUB_TOKEN`、可选的 `DEEPSEEK_API_KEY` 与 `DEEPSEEK_MODEL`，构建命令保持 `npm run build`。不需要数据库、后台任务或 Docker。部署后用公开仓库完成一次真实分析，核对 API 限流与区域网络访问。
 
 Live Demo：待 Vercel 项目创建并配置环境变量后填写。当前可使用上述本地命令演示。
 
