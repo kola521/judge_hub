@@ -43,6 +43,13 @@ describe('GitHubClient', () => {
     await expect(new GitHubClient(undefined, fetcher).get('/repos/timeout/repo')).rejects.toMatchObject({ code: 'GITHUB_TIMEOUT' });
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it('retries a transient malformed JSON response before marking the source unavailable', async () => {
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(new Response('{"incomplete":', { status: 200 }))
+      .mockResolvedValueOnce(new Response('{"name":"recovered"}', { status: 200 }));
+    expect(await new GitHubClient(undefined, fetcher).get('/repos/retry/json')).toEqual({ name: 'recovered' });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
   it('stops queued requests after a response exhausts the primary budget', async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response('{}', { headers: { 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': String(Math.floor(Date.now() / 1000) + 3600) } }));
     const client = new GitHubClient(undefined, fetcher);

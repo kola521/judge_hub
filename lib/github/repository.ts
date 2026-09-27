@@ -52,6 +52,7 @@ export async function fetchRepositoryMetrics(client: GitHubClient, ref: Reposito
   const q = (params: Record<string, string>) => '?' + new URLSearchParams(params).toString();
   const run = limiter(3);
   const names = ['languages', 'commits', 'contributors', 'tree', 'issuesOpen', 'issuesClosed', 'prsOpen', 'prsClosed', 'releases'] as const;
+  const sourceLabels = ['编程语言', '提交记录', '贡献者', '目录结构', '未关闭的议题', '已关闭的议题', '未关闭的拉取请求', '已关闭的拉取请求', '版本发布'] as const;
   const jobs = [
     () => client.get<Record<string, number>>(path + '/languages', refresh),
     () => client.list<Commit>(path + '/commits' + q({ since: since90, per_page: '100' }), 5, refresh),
@@ -75,9 +76,9 @@ export async function fetchRepositoryMetrics(client: GitHubClient, ref: Reposito
     if (fastOnly && index >= 4) return;
     if (state.status === 'rejected') {
       const code = state.reason instanceof GitHubError ? state.reason.code : 'PARTIAL_GITHUB_FAILURE';
-      warnings.push({ code, message: name + ' 数据暂不可用。' });
+      warnings.push({ code, message: sourceLabels[index] + '数据暂不可用。' });
     } else if (typeof state.value === 'object' && state.value !== null && 'truncated' in state.value && state.value.truncated) {
-      warnings.push({ code: name === 'contributors' ? 'CONTRIBUTORS_SAMPLED' : 'GITHUB_DATA_SAMPLED', message: name + ' 达到分页上限，相关总量不会按完整数据展示。' });
+      warnings.push({ code: name === 'contributors' ? 'CONTRIBUTORS_SAMPLED' : 'GITHUB_DATA_SAMPLED', message: sourceLabels[index] + '达到分页上限，相关总量不会按完整数据展示。' });
     }
   });
   const languages = result(settled[0]) as Record<string, number> | null;

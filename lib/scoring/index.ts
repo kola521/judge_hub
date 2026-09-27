@@ -23,45 +23,45 @@ export function calculateHealth(metrics: RepositoryMetrics): HealthScore {
     return { value: (numerator.value ?? 0) / Math.max(1, (numerator.value ?? 0) + (denominator.value ?? 0)), status: 'available' };
   };
   const specs: { key: keyof typeof WEIGHTS; name: string; items: Item[] }[] = [
-    { key: 'activity', name: 'Activity', items: [
+    { key: 'activity', name: '活跃度', items: [
       item('activity.commits30d', '30 天提交', 22.5, m.activity.commits30d, numberScore(THRESHOLDS.commits90d / 3)),
       item('activity.commits90d', '90 天提交', 22.5, m.activity.commits90d, numberScore(THRESHOLDS.commits90d)),
       item('activity.lastCommitAt', '最近提交', 30, m.activity.lastCommitAt, dateScore),
       item('activity.activeContributors', '90 天活跃贡献者', 25, m.activity.activeContributors, numberScore(THRESHOLDS.activeContributors)),
     ] },
-    { key: 'maintenance', name: 'Maintenance', items: [
+    { key: 'maintenance', name: '维护情况', items: [
       item('maintenance.issueHandling', '90 天 Issue 处理', 25, ratio(m.maintenance.issuesClosed90d, m.maintenance.issuesOpen), ratioScore(THRESHOLDS.issueHandled)),
       item('maintenance.prHandling', '90 天 PR 处理', 25, ratio(m.maintenance.prsMerged90d, m.maintenance.prsOpen), ratioScore(THRESHOLDS.prHandled)),
       item('maintenance.latestReleaseAt', '最近发布', 12.5, m.maintenance.latestReleaseAt, dateScore),
       item('maintenance.releases90d', '90 天发布次数', 12.5, m.maintenance.releases90d, numberScore(THRESHOLDS.releases90d)),
       item('maintenance.repositoryPushedAt', '仓库更新', 25, m.maintenance.repositoryPushedAt, dateScore),
     ] },
-    { key: 'collaboration', name: 'Collaboration', items: [
+    { key: 'collaboration', name: '协作情况', items: [
       item('activity.contributors', '贡献者广度', 30, m.activity.contributors, numberScore(THRESHOLDS.contributorBreadth)),
       item('activity.activeContributors', '活跃贡献者', 30, m.activity.activeContributors, numberScore(THRESHOLDS.activeContributors)),
       item('collaboration.topContributorShare', '头部贡献者占比', 12.5, m.collaboration.topContributorShare, (value) => cap((1 - Number(value)) * 125)),
       item('collaboration.top3ContributorShare', '前三贡献者占比', 12.5, m.collaboration.top3ContributorShare, (value) => cap((1 - Number(value)) * 150)),
       item('collaboration.prContributorBreadth', 'PR 协作广度', 15, m.collaboration.prContributorBreadth, numberScore(THRESHOLDS.prBreadth)),
     ] },
-    { key: 'documentation', name: 'Documentation', items: [
+    { key: 'documentation', name: '文档完整度', items: [
       item('documentation.readme', 'README', 30, m.documentation.readme, boolScore),
-      item('documentation.license', 'License', 20, m.documentation.license, boolScore),
-      item('documentation.contributing', 'Contributing', 20, m.documentation.contributing, boolScore),
-      item('documentation.security', 'Security', 15, m.documentation.security, boolScore),
-      item('documentation.conduct', 'Code of Conduct', 10, m.documentation.conduct, boolScore),
-      item('documentation.docs', 'docs/', 5, m.documentation.docs, boolScore),
+      item('documentation.license', '开源许可证', 20, m.documentation.license, boolScore),
+      item('documentation.contributing', '贡献指南', 20, m.documentation.contributing, boolScore),
+      item('documentation.security', '安全说明', 15, m.documentation.security, boolScore),
+      item('documentation.conduct', '行为准则', 10, m.documentation.conduct, boolScore),
+      item('documentation.docs', '文档目录', 5, m.documentation.docs, boolScore),
     ] },
-    { key: 'engineering', name: 'Engineering', items: [
-      item('engineering.ci', 'CI', 30, m.engineering.ci, boolScore),
+    { key: 'engineering', name: '工程实践', items: [
+      item('engineering.ci', '持续集成', 30, m.engineering.ci, boolScore),
       item('engineering.tests', '测试信号', 25, m.engineering.tests, boolScore),
       item('engineering.dependencies', '依赖清单', 20, m.engineering.dependencies, boolScore),
       item('engineering.build', '构建配置', 15, m.engineering.build, boolScore),
       item('engineering.container', '容器或打包信号', 10, m.engineering.container, boolScore),
     ] },
-    { key: 'community', name: 'Community', items: [
-      item('popularity.stars', 'Stars', 40, m.popularity.stars, (value) => logScale(Number(value), THRESHOLDS.stars)),
-      item('popularity.forks', 'Forks', 35, m.popularity.forks, (value) => logScale(Number(value), THRESHOLDS.forks)),
-      item('popularity.watchers', 'Watchers', 25, m.popularity.watchers, (value) => logScale(Number(value), THRESHOLDS.watchers)),
+    { key: 'community', name: '社区关注', items: [
+      item('popularity.stars', '收藏数', 40, m.popularity.stars, (value) => logScale(Number(value), THRESHOLDS.stars)),
+      item('popularity.forks', '派生数', 35, m.popularity.forks, (value) => logScale(Number(value), THRESHOLDS.forks)),
+      item('popularity.watchers', '关注数', 25, m.popularity.watchers, (value) => logScale(Number(value), THRESHOLDS.watchers)),
     ] },
   ];
   let availableWeight = 0;

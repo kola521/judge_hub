@@ -81,7 +81,10 @@ export class GitHubClient {
         }
         if (response.status === 204) return { data: [] as T, link: null };
         let data: T;
-        try { data = await response.json() as T; } catch { throw new GitHubError('GITHUB_INVALID_RESPONSE', 'GitHub 返回了无法解析的数据。', 502); }
+        try { data = await response.json() as T; } catch {
+          if (attempt < 2 && this.rateLimitedUntil <= Date.now()) { await new Promise((resolve) => setTimeout(resolve, 250 * 2 ** attempt)); continue; }
+          throw new GitHubError('GITHUB_INVALID_RESPONSE', 'GitHub 返回了无法解析的数据。', 502);
+        }
         return { data, link: response.headers.get('link'), etag: response.headers.get('etag') ?? undefined, lastModified: response.headers.get('last-modified') ?? undefined };
       } catch (error) {
         if (error instanceof GitHubError) throw error;

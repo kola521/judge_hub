@@ -21,7 +21,7 @@ export function RepositorySearch({ initialValue = '' }: { initialValue?: string 
     <label htmlFor="repository-url" className="field-label">公开 GitHub 仓库</label>
     <div className="search-box"><Github aria-hidden="true" size={21} className="search-icon" />
       <input id="repository-url" autoComplete="off" spellCheck={false} value={value} onChange={(event) => { setValue(event.target.value); setError(''); }} placeholder="github.com/owner/repository" aria-invalid={Boolean(error)} aria-describedby={error ? 'search-error' : 'search-hint'} />
-      <button type="submit" disabled={!value.trim()}><Search size={17} aria-hidden="true" /><span>Analyze repository</span><ArrowRight size={16} aria-hidden="true" /></button>
+      <button type="submit" disabled={!value.trim()}><Search size={17} aria-hidden="true" /><span>分析仓库</span><ArrowRight size={16} aria-hidden="true" /></button>
     </div>
     <p id={error ? 'search-error' : 'search-hint'} role={error ? 'alert' : undefined} className={error ? 'field-error' : 'field-hint'}>{error || '支持 https://github.com/owner/repo、github.com/owner/repo 和 owner/repo'}</p>
   </form>;

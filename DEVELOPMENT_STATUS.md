@@ -8,16 +8,17 @@
 - 初始 GitHub 仓库 `kola521/judge_hub` 只有 README，没有既有工程约定；已采用文档推荐的 Next.js App Router、React、TypeScript strict、Tailwind CSS、Recharts、Zod 和 Vitest。根目录 `AGENTS.md` 已编写。
 - GitHub REST 请求统一经 `lib/github/client.ts`：认证、API 版本、分页、超时、有限重试、条件请求、进程缓存、限流与请求合并。公开仓库主数据必需，其余源部分失败时产生 warning 和明确的 `unavailable` 指标。拒绝分析私有仓库。
 - `repo-health-v1` 评分、Coverage 和 Evidence 由纯函数确定性计算；AI 仅按已生成的指标与 Evidence 解释。AI Key 缺失时报告照常生成，AI 区域显示降级。
-- 首页和报告页支持 Fast Scan、Deep Signals、图表、加载/错误/部分数据状态、360px 视口、手动刷新、最近 5 个仓库和调试信息。
+- 首页和报告页支持 Fast Scan、Deep Signals、图表、加载/错误/部分数据状态、360px 视口、手动刷新、最近 5 个仓库和调试信息；用户可见文案已改为简体中文。
 
 ## 验证结果（2026-09-27）
 
 - `npm run lint`：通过，0 errors / 0 warnings。
 - `npm run typecheck`：通过。
-- `npm test`：29/29 通过，6 个测试文件。
+- `npm test`：30/30 通过，6 个测试文件。
 - `npm run build`：通过；首页、仓库页、API 路由均构建成功。
 - 本地生产服务真实调用 `kola521/judge_hub` 与 `facebook/react`，均返回 HTTP 200、六维评分和 Evidence；后者按 GitHub 重定向至 `react/react`。不存在的仓库返回 404。无 AI Key 时返回 `AI_UNAVAILABLE`。浏览器检查首页和报告页，360px 与 1280px 均无水平溢出。
 - 审查后补充了私有仓库拒绝、缓存隔离、AI 证据 key 校验、403 状态映射、Dockerfile 识别、上游异常源降级及限流预算的回归测试；四项门禁在这些修复后重跑通过。
+- 中文界面及 GitHub 大响应 JSON 解析重试完成后，四项门禁再次通过；`vercel/next.js` 的已关闭 PR 数据在重试后恢复获取，大型目录树仍可能部分失败并明确提示。
 
 ## 技术决策
 
@@ -28,7 +29,7 @@
 
 ## 已知限制与交付状态
 
-- 没有 `OPENAI_API_KEY`，因此只验证了 AI 结构、证据与降级逻辑，未运行真实 AI 供应商请求。
+- 用户提供的 AI Key 已写入仅本机可读的 `.env.local`，该文件被 Git 忽略。服务商待确认；默认 OpenAI 接口连通性检查超时，实际 AI 解读仍显示降级。核心指标与评分正常。
 - Vercel CLI 的临时部署在此环境仍要求登录；当前无 Vercel 凭据，AC-012 Live Demo 尚未完成。本地生产构建和真实 GitHub API 演示已验证。
 - 无 Token 时，GitHub 的共享 IP 限额可能导致后续分析出现限流和部分结果；服务端会显示明确状态，不将缺失数据当作零。
 - 缓存仅在当前进程有效，多实例之间不共享。
